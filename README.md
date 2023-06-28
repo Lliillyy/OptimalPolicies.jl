@@ -1,2 +1,1 @@
-# NewPackage.jl
 # OptimalPolicies.jl
