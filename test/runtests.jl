@@ -2,4 +2,4 @@ using OptimalPolicies
 using Test
 
 # Test scripts
-include(...)
+include(foo_test.jl)
