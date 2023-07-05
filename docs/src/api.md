@@ -13,7 +13,3 @@ This page is a dump of all the docstrings found in the code.
 Modules = [OptimalPolicies]
 Order = [:module, :type, :function, :macro]
 ```
-
-```@docs
-foo(x, y)
-```
