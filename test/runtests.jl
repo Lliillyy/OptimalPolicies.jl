@@ -2,4 +2,9 @@ using OptimalPolicies
 using Test
 
 # Test scripts
-include(foo_test.jl)
+@testset "OptimalPolicies test" begin
+
+	@testset "Foo test" begin
+		include("foo_test.jl")
+	end
+end
