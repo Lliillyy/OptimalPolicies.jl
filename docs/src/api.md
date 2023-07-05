@@ -1,15 +1,19 @@
-    ```@meta
-    CurrentModule = OptimalPolicies 
-    ```
+```@meta
+CurrentModule = OptimalPolicies 
+```
 
-    ```@contents
-    Pages = ["api.md"]
-    ```
+```@contents
+Pages = ["api.md"]
+```
 
-    # API
-    This page is a dump of all the docstrings found in the code. 
+# API
+This page is a dump of all the docstrings found in the code. 
 
-    ```@autodocs
-    Modules = [OptimalPolicies, foo]
-    Order = [:module, :type, :function, :macro]
-    ```
+```@autodocs
+Modules = [OptimalPolicies]
+Order = [:module, :type, :function, :macro]
+```
+
+```@docs
+foo(x, y)
+```
