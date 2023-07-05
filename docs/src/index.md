@@ -1,4 +1,4 @@
 # OptimalPolicies.jl
 
 ## Overview
-This package is build for finding an optimal transportation network.
+This package is aiming for finding an optimal transportation network through MCMC simulation.
