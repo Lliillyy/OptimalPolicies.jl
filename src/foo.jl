@@ -25,4 +25,3 @@ Returns a potential function for the given potential barrier height `gam`
 function curried(gam::Number)
     x -> U(gam, x)
 end
-
