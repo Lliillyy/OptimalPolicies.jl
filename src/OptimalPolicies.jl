@@ -1,9 +1,7 @@
 # [src/OptimalPolicies.jl]
 module OptimalPolicies
 
-using StaticArrays
-
-greet() = print("Hello World!")
+using StaticArrays, Pigeons
 
 include("foo.jl")
 
