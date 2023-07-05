@@ -10,16 +10,17 @@ on:
 
 jobs:
   build:
-    runs-on: $
+    runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        julia-version: [1.9]
-        julia-arch: [x64]
+        version: [1.9]
+        arch: [x64]
         os: [ubuntu-latest]
     steps:
-      - uses: julia-actions/setup-julia@latest
+      - uses: julia-actions/setup-julia@v1
         with:
-          version: $
+          version: ${{ matrix.version }}
+          arch: ${{ matrix.arch }}
 
       - uses: actions/checkout@v3
       - name: Install JuliaFormatter and format
