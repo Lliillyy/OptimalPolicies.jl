@@ -1,7 +1,7 @@
 # [src/OptimalPolicies.jl]
 module OptimalPolicies
 
-using StaticArrays, Pigeons
+using StaticArrays, Pigeons, Distributions
 
 include("foo.jl")
 
