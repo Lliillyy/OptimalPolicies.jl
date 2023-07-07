@@ -13,7 +13,7 @@
 # Pkg.add("Plots")
 # Pkg.add("StatsPlots")
 # Pkg.add("StatsBase")
-using Distributions, Statistics, StatsPlots
+using Distributions, StatsPlots
 gr(fmt=:png)
 
 """
@@ -101,7 +101,8 @@ function chains(pot = U, tune = 0.1, init = 1)
     xmat = zeros(iters, length(temps))
     for i in 1:iters
         can = x + randn(length(temps)) * tune
-        logA = [pot(gam, x[j]) - pot(gam, can[j]) for (j, gam) in enumerate(temps)]
+        logA = [pot(gam, x[j]) - pot(gam, can[j]) 
+                for (j, gam) in enumerate(temps)]
         accept = log.(rand(length(temps))) .< logA
         x[accept] .= can[accept]
         xmat[i, :] = x
