@@ -82,8 +82,35 @@ iters = Int(1e5)
 
 # Run chains and store results
 mat = hcat([chain(curried(gam)) for gam in temps]...)
+colnames(mat) = ["gamma=$gam" for gam in temps]
 
 # Compute summary statistics
+summary_stats = Dict(
+    "mean" => mean(mat, dims = 1),
+    "std" => std(mat, dims = 1),
+    "minimum" => minimum(mat, dims = 1),
+    "maximum" => maximum(mat, dims = 1)
+)
+
+println(summary_stats)
+
+
+# Generate 5 chains at once
+function chains(pot = U, tune = 0.1, init = 1)
+    x = fill(init, length(temps))
+    xmat = zeros(iters, length(temps))
+    for i in 1:iters
+        can = x + randn(length(temps)) * tune
+        logA = [pot(gam, x[j]) - pot(gam, can[j]) for (j, gam) in enumerate(temps)]
+        accept = log.(rand(length(temps))) .< logA
+        x[accept] .= can[accept]
+        xmat[i, :] = x
+    end
+    colnames(xmat) = ["gamma=$gam" for gam in temps]
+    xmat
+end
+
+mat = chains()
 summary_stats = Dict(
     "mean" => mean(mat, dims = 1),
     "std" => std(mat, dims = 1),
