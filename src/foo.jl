@@ -13,7 +13,7 @@
 # Pkg.add("Plots")
 # Pkg.add("StatsPlots")
 # Pkg.add("StatsBase")
-using Distributions, StatsPlots
+using Distributions, StatsPlots, Statistics
 gr(fmt=:png)
 
 """
@@ -62,7 +62,7 @@ savefig("plots.png")  # Save the combined plots as plots.png
 
 The Metropolis algorithm targeting a particular potential function `target`
 """
-function chain(target, tune=0.1, init=1)
+function chain(target, tune=0.1, init=1.)
     x = init
     xvec = Vector{Float64}(undef, iters)
     for i in 1:iters
@@ -96,13 +96,12 @@ println(summary_stats)
 
 
 # Generate 5 chains at once
-function chains(pot = U, tune = 0.1, init = 1)
+function chains(pot = U, tune = 0.1, init = 1.)
     x = fill(init, length(temps))
     xmat = zeros(iters, length(temps))
     for i in 1:iters
         can = x + randn(length(temps)) * tune
-        logA = [pot(gam, x[j]) - pot(gam, can[j]) 
-                for (j, gam) in enumerate(temps)]
+        logA = [pot(gam, x[j]) - pot(gam, can[j]) for (j, gam) in enumerate(temps)]
         accept = log.(rand(length(temps))) .< logA
         x[accept] .= can[accept]
         xmat[i, :] = x

@@ -2,7 +2,7 @@
 module OptimalPolicies
 
 using StaticArrays, Pigeons
-using Distributions, StatsPlots
+using Distributions, StatsPlots, Statistics
 
 
 include("foo.jl")
