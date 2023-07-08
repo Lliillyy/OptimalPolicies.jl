@@ -2,7 +2,7 @@
 module OptimalPolicies
 
 # using StaticArrays, Pigeons
-using Distributions, StatsPlots, Statistics
+using Distributions, StatsPlots #, Statistics
 include("mcmc.jl")
 
 # Plot potential and density functions

@@ -1,6 +1,6 @@
 # [src/mcmc.jl]
 
-using Distributions, StatsPlots, Statistics
+using Distributions, StatsPlots #, Statistics
 gr(fmt=:png)
 
 """
