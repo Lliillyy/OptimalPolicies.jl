@@ -27,7 +27,7 @@ end
 
 The Metropolis algorithm targeting a particular potential function `target`
 """
-function chain(target, tune = 0.1, init = 1.0)
+function chain(target; tune = 0.1, init = 1.0, iters = Int(1e3))
     x = init
     xvec = Vector{Float64}(undef, iters)
     for i = 1:iters
@@ -62,7 +62,7 @@ end
 
 Generates 5 chains at once
 """
-function chains(pot = U, tune = 0.1, init = 1.0)
+function chains(; pot = U, tune = 0.1, init = 1.0, iters = Int(1e3), temps = [1, 2])
     x = fill(init, length(temps))
     xmat = zeros(iters, length(temps))
     for i = 1:iters
@@ -70,6 +70,15 @@ function chains(pot = U, tune = 0.1, init = 1.0)
         logA = [pot(gam, x[j]) - pot(gam, can[j]) for (j, gam) in enumerate(temps)]
         accept = log.(rand(length(temps))) .< logA
         x[accept] .= can[accept]
+        # swap states
+        swap = sample(1:length(temps), 2)
+        logA =
+            pot(temps[swap[1]], x[swap[1]]) + pot(temps[swap[2]], x[swap[2]]) -
+            pot(temps[swap[1]], x[swap[2]]) - pot(temps[swap[2]], x[swap[1]])
+        if log(rand()) < logA
+            x[swap] = reverse(x[swap])
+        end
+        # end swapping
         xmat[i, :] = x
     end
     colnames(xmat) = ["gamma=$gam" for gam in temps]
