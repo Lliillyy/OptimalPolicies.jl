@@ -44,7 +44,7 @@ end
 """
     print_summary(mat)
 
-Compute summary statistics
+Computes and displays the statistics of the given matrix `mat`
 """
 function print_summary(mat)
     summary_stats = Dict(
@@ -60,7 +60,7 @@ end
 """
     chains(pot = U, tune = 0.1, init = 1.)
 
-Generate 5 chains at once
+Generates 5 chains at once
 """
 function chains(pot = U, tune = 0.1, init = 1.)
     x = fill(init, length(temps))
