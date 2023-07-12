@@ -1,7 +1,7 @@
 # [src/mcmc.jl]
 
-using Distributions, StatsPlots #, Statistics
-gr(fmt=:png)
+using Distributions, StatsPlots
+gr(fmt = :png)
 
 """
     U(gam::Number, x::Number)
@@ -27,10 +27,10 @@ end
 
 The Metropolis algorithm targeting a particular potential function `target`
 """
-function chain(target, tune=0.1, init=1.)
+function chain(target, tune = 0.1, init = 1.0)
     x = init
     xvec = Vector{Float64}(undef, iters)
-    for i in 1:iters
+    for i = 1:iters
         can = x + randn() * tune
         logA = target(x) - target(can)
         if log(rand()) < logA
@@ -51,7 +51,7 @@ function print_summary(mat)
         "mean" => mean(mat, dims = 1),
         "std" => std(mat, dims = 1),
         "minimum" => minimum(mat, dims = 1),
-        "maximum" => maximum(mat, dims = 1)
+        "maximum" => maximum(mat, dims = 1),
     )
 
     println(summary_stats)
@@ -62,10 +62,10 @@ end
 
 Generates 5 chains at once
 """
-function chains(pot = U, tune = 0.1, init = 1.)
+function chains(pot = U, tune = 0.1, init = 1.0)
     x = fill(init, length(temps))
     xmat = zeros(iters, length(temps))
-    for i in 1:iters
+    for i = 1:iters
         can = x + randn(length(temps)) * tune
         logA = [pot(gam, x[j]) - pot(gam, can[j]) for (j, gam) in enumerate(temps)]
         accept = log.(rand(length(temps))) .< logA

@@ -5,24 +5,21 @@ using Distributions, StatsPlots
     gam = 4
     x = -2.0
     U4 = OptimalPolicies.curried(gam)
-    
+
     @test U4(x) == OptimalPolicies.U(gam, x)
     @test OptimalPolicies.U(gam, x) == 36.0
-    
+
     # Plot potential function
-    p1 = plot(
-        U4, -2, 2,
-        title = "Potential function, U(x)",
-        legend = false,
-        fmt = :png
-    )
+    p1 = plot(U4, -2, 2, title = "Potential function, U(x)", legend = false, fmt = :png)
 
     # Plot density function
     p2 = plot(
-        x -> exp(-U4(x)), -2, 2,
+        x -> exp(-U4(x)),
+        -2,
+        2,
         title = "Unnormalized density function, exp(-U(x))",
         legend = false,
-        fmt = :png
+        fmt = :png,
     )
 
     # Combine the plots
@@ -30,7 +27,7 @@ using Distributions, StatsPlots
     savefig("plots.png")  # Save the combined plots as plots.png
 
     # Global settings
-    temps = 2 .^(0:3)
+    temps = 2 .^ (0:3)
     iters = Int(1e5)
 
     # Run chains and store results
