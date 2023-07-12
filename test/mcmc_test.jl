@@ -34,10 +34,9 @@ end
 
     # Run chains and store results
     mat = hcat([OptimalPolicies.chain(OptimalPolicies.curried(gam)) for gam in temps]...)
-    colnames(mat) = ["gamma=$gam" for gam in temps]
-    OptimalPolicies.print_summary(mat)
+    OptimalPolicies.print_summary(mat, temps)
 
     # 5 chains
     mat1 = OptimalPolicies.chains(temps = temps, iters = iters)
-    OptimalPolicies.print_summary(mat1)
+    OptimalPolicies.print_summary(mat1, temps)
 end

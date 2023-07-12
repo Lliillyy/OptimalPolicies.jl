@@ -23,7 +23,7 @@ function curried(gam::Number)
 end
 
 """
-    chain(target, tune=0.1, init=1, iters=1e5)
+    chain(target; tune = 0.1, init = 1.0, iters = Int(1e3))
 
 The Metropolis algorithm targeting a particular potential function `target`
 """
@@ -46,8 +46,9 @@ end
 
 Computes and displays the statistics of the given matrix `mat`
 """
-function print_summary(mat)
+function print_summary(mat, temps)
     summary_stats = Dict(
+        "gamma" => temps,
         "mean" => mean(mat, dims = 1),
         "std" => std(mat, dims = 1),
         "minimum" => minimum(mat, dims = 1),
@@ -58,7 +59,7 @@ function print_summary(mat)
 end
 
 """
-    chains(pot = U, tune = 0.1, init = 1.)
+    chains(; pot = U, tune = 0.1, init = 1.0, iters = Int(1e3), temps = [1, 2])
 
 Generates 5 chains at once
 """
