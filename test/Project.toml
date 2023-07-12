@@ -1,2 +1,8 @@
 [deps]
+Distributions = "31c24e10-a181-5473-b8eb-7969acd0382f"
+StatsPlots = "f3b207a7-027a-5e70-b257-86293d7955fd"
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+
+[compat]
+Distributions = "0.25.98"
+StatsPlots = "0.15.5"
