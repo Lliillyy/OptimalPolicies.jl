@@ -1,5 +1,6 @@
 # [test/foo_test.jl]
-using Distributions, StatsPlots
+using Distributions, StatsPlots, Pigeons
+
 
 @testset "U test" begin
     gam = 4
@@ -33,10 +34,35 @@ end
     iters = Int(1e5)
 
     # Run chains and store results
-    mat = hcat([OptimalPolicies.chain(OptimalPolicies.curried(gam)) for gam in temps]...)
+    mat = hcat(
+        [
+            OptimalPolicies.chain(OptimalPolicies.curried(gam), iters = iters) for
+            gam in temps
+        ]...,
+    )
     OptimalPolicies.print_summary(mat, temps)
+
+    for i = 1:length(temps)
+        OptimalPolicies.plot_chain(mat[:, i], temps[i], dir = "chain_result/")
+    end
 
     # 5 chains
     mat1 = OptimalPolicies.chains(temps = temps, iters = iters)
     OptimalPolicies.print_summary(mat1, temps)
+
+    for i = 1:length(temps)
+        OptimalPolicies.plot_chain(mat1[:, i], temps[i], dir = "chains_result/")
+    end
 end
+
+# @testset "Pigeons test" begin
+#     gam = 4
+#     x = -2.0
+#     U4 = OptimalPolicies.curried(gam)
+
+#     pt = pigeons(
+#         target = U4,
+#         recorder_builders = [index_process],
+#         n_rounds = 5
+#     );
+# end

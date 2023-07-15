@@ -1,6 +1,6 @@
 # [src/mcmc.jl]
 
-using Distributions, StatsPlots
+using Distributions, StatsPlots, StatsBase
 gr(fmt = :png)
 
 """
@@ -23,6 +23,15 @@ function curried(gam::Number)
 end
 
 """
+    density(gam::Number, x::Number)
+
+The density function for some given potential barrier height `gam`
+"""
+function density(gam::Number, x::Number)
+    exp(-U(gam, x))
+end
+
+"""
     chain(target; tune = 0.1, init = 1.0, iters = Int(1e3))
 
 The Metropolis algorithm targeting a particular potential function `target`
@@ -42,7 +51,7 @@ function chain(target; tune = 0.1, init = 1.0, iters = Int(1e3))
 end
 
 """
-    print_summary(mat)
+    print_summary(mat, temps)
 
 Computes and displays the statistics of the given matrix `mat`
 """
@@ -56,6 +65,57 @@ function print_summary(mat, temps)
     )
 
     println(summary_stats)
+end
+
+
+"""
+    plot_chain(xvec, gam; dir = "result/")
+
+Plot the value, autocorrelation, and density of a chain `xvec` given the value
+of `gam`, store the plot in the directory `dir`
+"""
+function plot_chain(xvec, gam; dir = "result/")
+    # Compute autocorrelation
+    acf_values = autocor(xvec)
+
+    # Plot ACF
+    p1 = plot(
+        xvec,
+        xlabel = "Iteration",
+        ylabel = "Value",
+        label = false,
+        title = "gamma=$gam",
+    )
+
+    p2 = plot(
+        acf_values,
+        marker = :circle,
+        markersize = 4,
+        ylims = (0, 1),
+        xlabel = "Lag",
+        ylabel = "ACF",
+        label = false,
+        title = "gamma=$gam",
+    )
+
+    # Plot density histogram
+    p3 = histogram(
+        xvec,
+        xlabel = "Value",
+        ylabel = "Density",
+        label = false,
+        title = "gamma=$gam",
+        density = true,
+        bins = 100,
+    )
+
+    # Combine the plots
+    plot(p1, p2, p3, layout = (1, 3), size = (1500, 300))
+
+    if !isdir(dir)
+        mkdir(dir)
+    end
+    savefig(dir * "gamma=$gam.png")
 end
 
 """
