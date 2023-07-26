@@ -50,6 +50,31 @@ function chain(target; tune = 0.1, init = 1.0, iters = Int(1e3))
     xvec
 end
 
+function chain_bb(target; init = 1, iters = Int(1e3))
+    alpha = 0.2    # Shape parameter of the Beta distribution
+    beta = 0.25     # Shape parameter of the Beta distribution
+    n = 10         # Number of trials
+    bb_dist = BetaBinomial(n, alpha, beta)
+
+    # # Define the probability mass function (PMF)
+    # pmf = [0.2, 0.4, 0.3, 0.1]
+
+    # # Define the discrete distribution
+    # dist = Categorical(pmf)
+
+    x = init
+    xvec = Vector{Int}(undef, iters)
+    for i = 1:iters
+        can = rand(bb_dist)
+        logA = target(can) - target(x)
+        if log(rand()) < logA
+            x = can
+        end
+        xvec[i] = x
+    end
+    xvec
+end
+
 """
     print_summary(mat, temps)
 
@@ -121,7 +146,7 @@ end
 """
     chains(; pot = U, tune = 0.1, init = 1.0, iters = Int(1e3), temps = [1, 2])
 
-Generates 5 chains at once
+Generates chains based on the `temps`
 """
 function chains(; pot = U, tune = 0.1, init = 1.0, iters = Int(1e3), temps = [1, 2])
     x = fill(init, length(temps))
@@ -142,6 +167,5 @@ function chains(; pot = U, tune = 0.1, init = 1.0, iters = Int(1e3), temps = [1,
         # end swapping
         xmat[i, :] = x
     end
-    colnames(xmat) = ["gamma=$gam" for gam in temps]
     xmat
 end

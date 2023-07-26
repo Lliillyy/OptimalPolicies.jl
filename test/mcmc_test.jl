@@ -1,8 +1,10 @@
-# [test/foo_test.jl]
-using Distributions, StatsPlots, Pigeons
+# [test/mcmc_test.jl]
+using Distributions
+using StatsPlots
+using Pigeons
 
 
-@testset "U test" begin
+@testset "U" begin
     gam = 4
     x = -2.0
     U4 = OptimalPolicies.curried(gam)
@@ -28,7 +30,7 @@ using Distributions, StatsPlots, Pigeons
     savefig("plots.png")  # Save the combined plots as plots.png
 end
 
-@testset "chain test" begin
+@testset "chain" begin
     # Global settings
     temps = 2 .^ (0:3)
     iters = Int(1e5)
@@ -42,7 +44,7 @@ end
     )
     OptimalPolicies.print_summary(mat, temps)
 
-    for i = 1:length(temps)
+    for i = eachindex(temps)
         OptimalPolicies.plot_chain(mat[:, i], temps[i], dir = "chain_result/")
     end
 
@@ -50,19 +52,26 @@ end
     mat1 = OptimalPolicies.chains(temps = temps, iters = iters)
     OptimalPolicies.print_summary(mat1, temps)
 
-    for i = 1:length(temps)
+    for i = eachindex(temps)
         OptimalPolicies.plot_chain(mat1[:, i], temps[i], dir = "chains_result/")
     end
 end
 
-# @testset "Pigeons test" begin
-#     gam = 4
-#     x = -2.0
-#     U4 = OptimalPolicies.curried(gam)
+@testset "chain_bb" begin
+    # Global settings
+    temps = 2 .^ (0:3)
+    iters = Int(1e5)
 
-#     pt = pigeons(
-#         target = U4,
-#         recorder_builders = [index_process],
-#         n_rounds = 5
-#     );
-# end
+    # Run chains and store results
+    mat = hcat(
+        [
+            OptimalPolicies.chain_bb(OptimalPolicies.curried(gam), iters = iters) for
+            gam in temps
+        ]...,
+    )
+    OptimalPolicies.print_summary(mat, temps)
+
+    for i = eachindex(temps)
+        OptimalPolicies.plot_chain(mat[:, i], temps[i], dir = "chain_bb_result/")
+    end
+end
