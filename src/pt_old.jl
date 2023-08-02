@@ -1,5 +1,6 @@
 using Pigeons
 using Random
+using StatsPlots
 using Distributions
 import Base.@kwdef
 
@@ -21,15 +22,33 @@ end
 recompute_U(state::UState) = (state.x^2 - 1)^2
 
 Base.copy(state::UState) = UState(state.x)
-# Base.length(state::UState) = 1
+Base.length(state::UState) = 1
 
-# Make ULogPotential conform the log_potential informal interface
+# Make IsingLogPotential conform the log_potential informal interface
 (log_potential::ULogPotential)(state::UState) = log_potential.beta * state.U_value
 
-# Reference distribution uses beta = 0
-Pigeons.default_reference(log_potential::ULogPotential) = ULogPotential(0.0)
 
-# Initialization
+# sample
+# function iid_bb!(state::UState)
+#     @assert recompute_U(state) == state.U_value
+#     alpha = 2   # Shape parameter of the Beta distribution
+#     beta = 2     # Shape parameter of the Beta distribution
+#     n = 500         # Number of trials
+#     bb_dist = BetaBinomial(n, alpha, beta)
+#     state.x = rand(bb_dist)
+#     state.U_value = recompute_U(state)
+#     return nothing
+# end
+
+# Reference distribution uses beta = 0...
+Pigeons.default_reference(log_potential::ULogPotential) = ULogPotential(0.0)
+# ... so that we can do i.i.d. sampling of Bernoullis at the reference:
+# function Pigeons.sample_iid!(reference_log_potential::ULogPotential, replica, shared)
+#     # @assert reference_log_potential.beta == 0.0
+#     iid_bb!(replica.state)
+# end
+
+# Initialization: all entries to zeros (falses)
 Pigeons.initialization(log_potential::ULogPotential, ::AbstractRNG, ::Int) = UState(0.0)
 
 # MCMC explorer 
@@ -44,6 +63,10 @@ Pigeons.default_explorer(lp::ULogPotential) = UMetropolis()
 
 # Perform explorer MCMC step
 function Pigeons.step!(explorer::UMetropolis, replica, shared)
+    # alpha = 2    # Shape parameter of the Beta distribution
+    # beta = 2     # Shape parameter of the Beta distribution
+    # n = 500         # Number of trials
+    # bb_dist = BetaBinomial(n, alpha, beta) # rand(bb_dist)
     # sampler = Normal(0.0, 0.1) # rand(replica.rng, sampler)
     log_potential = Pigeons.find_log_potential(replica, shared.tempering, shared)
 
@@ -63,11 +86,15 @@ function Pigeons.step!(explorer::UMetropolis, replica, shared)
 end
 
 # perform sampling - sanity check: log(Z) ≈ true value of around 33.3 for this example
-pt = pigeons(target = ULogPotential(8.0), record = [traces; index_process])
+pt = pigeons(
+    target = ULogPotential(8.0),
+    explorer = UMetropolis(),
+    record = [traces; index_process],
+)
 
 # pt = pigeons(
 #     target = ULogPotential(8.0),
-#     reference = ULogPotential(0.0001),
+#     # reference = ULogPotential(0.0001),
 #     record = [traces; index_process],
 #     # checked_round = 3,
 #     # checkpoint = true,
@@ -76,17 +103,16 @@ pt = pigeons(target = ULogPotential(8.0), record = [traces; index_process])
 #     #         n_threads = 1),
 # )
 
-# using StatsPlots
 # samples = Chains(sample_array(pt), variable_names(pt))
 # chain_plot = plot(samples)
 # savefig(chain_plot, "julia_posterior_densities_and_traces.png");
 
 # # sanity check: the local communication barrier has a peak near the predicted phase transition log(1+sqrt(2))/2
-using Plots
+# using Plots
 
 plot2 = plot(pt.reduced_recorders.index_process);
-savefig(plot2, "U_index_process_plot1.png");
+savefig(plot2, "U_index_process_plot.png");
 
 # plotlyjs() this line creates error
 plot1 = plot(pt.shared.tempering.communication_barriers.localbarrier)
-savefig(plot1, "U_localbarrier1.png")
+savefig(plot1, "U_localbarrier.png")

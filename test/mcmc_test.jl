@@ -44,7 +44,7 @@ end
     )
     OptimalPolicies.print_summary(mat, temps)
 
-    for i = eachindex(temps)
+    for i in eachindex(temps)
         OptimalPolicies.plot_chain(mat[:, i], temps[i], dir = "chain_result/")
     end
 
@@ -52,7 +52,7 @@ end
     mat1 = OptimalPolicies.chains(temps = temps, iters = iters)
     OptimalPolicies.print_summary(mat1, temps)
 
-    for i = eachindex(temps)
+    for i in eachindex(temps)
         OptimalPolicies.plot_chain(mat1[:, i], temps[i], dir = "chains_result/")
     end
 end
@@ -71,7 +71,7 @@ end
     )
     OptimalPolicies.print_summary(mat, temps)
 
-    for i = eachindex(temps)
+    for i in eachindex(temps)
         OptimalPolicies.plot_chain(mat[:, i], temps[i], dir = "chain_bb_result/")
     end
 end

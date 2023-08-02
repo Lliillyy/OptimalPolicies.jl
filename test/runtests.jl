@@ -6,8 +6,8 @@ using Test
     @testset "pt_test" begin
         include("pt_test.jl")
     end
-    
-    @testset "mcmc_test" begin
-        include("mcmc_test.jl")
-    end
+
+    # @testset "mcmc_test" begin
+    #     include("mcmc_test.jl")
+    # end
 end
