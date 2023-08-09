@@ -83,8 +83,8 @@ vector = get_sample(pt)
 print(length(vector))
 x_vector = [element.x for element in vector]
 u_vector = [element.U_value for element in vector]
-p1 = plot(x_vector, xlabel = "Iteration", ylabel = "x",)
-p2 = plot(u_vector, xlabel = "Iteration", ylabel = "U",)
+p1 = plot(x_vector, xlabel = "Iteration", ylabel = "x")
+p2 = plot(u_vector, xlabel = "Iteration", ylabel = "U")
 chain_plot = plot(p1, p2, layout = (2, 1), size = (1500, 600))
 # chain_plot = plot(samples)
 savefig(chain_plot, "chain_plot.png");

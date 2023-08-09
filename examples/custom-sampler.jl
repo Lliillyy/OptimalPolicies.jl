@@ -5,7 +5,8 @@ Pkg.instantiate()
 
 include("ising.jl")
 
-Base.copy(state::IsingState) = IsingState(state.matrix, state.sum_pair_products, state.base_length)
+Base.copy(state::IsingState) =
+    IsingState(state.matrix, state.sum_pair_products, state.base_length)
 Base.length(state::IsingState) = 1
 Base.iterate(state::IsingState) = iterate([state], 1)
 
@@ -19,7 +20,10 @@ pt = pigeons(target = IsingLogPotential(1.0, 5))
 
 
 # perform sampling - sanity check: log(Z) ≈ true value of around 33.3 for this example
-pt = pigeons(target = IsingLogPotential(1.0, 5), record = [traces; index_process; record_default()])
+pt = pigeons(
+    target = IsingLogPotential(1.0, 5),
+    record = [traces; index_process; record_default()],
+)
 
 samples = Chains(sample_array(pt), variable_names(pt))
 
