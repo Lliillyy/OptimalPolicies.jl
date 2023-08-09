@@ -76,17 +76,25 @@ pt = pigeons(target = ULogPotential(8.0), record = [traces; index_process])
 #     #         n_threads = 1),
 # )
 
-# using StatsPlots
-# samples = Chains(sample_array(pt), variable_names(pt))
+using StatsPlots
+# using MCMCChains
+# samples = Chains(get_sample(pt), variable_names(pt))
+vector = get_sample(pt)
+print(length(vector))
+x_vector = [element.x for element in vector]
+u_vector = [element.U_value for element in vector]
+p1 = plot(x_vector, xlabel = "Iteration", ylabel = "x",)
+p2 = plot(u_vector, xlabel = "Iteration", ylabel = "U",)
+chain_plot = plot(p1, p2, layout = (2, 1), size = (1500, 600))
 # chain_plot = plot(samples)
-# savefig(chain_plot, "julia_posterior_densities_and_traces.png");
+savefig(chain_plot, "chain_plot.png");
 
-# # sanity check: the local communication barrier has a peak near the predicted phase transition log(1+sqrt(2))/2
-using Plots
+# # # sanity check: the local communication barrier has a peak near the predicted phase transition log(1+sqrt(2))/2
+# using Plots
 
-plot2 = plot(pt.reduced_recorders.index_process);
-savefig(plot2, "U_index_process_plot1.png");
+# plot2 = plot(pt.reduced_recorders.index_process);
+# savefig(plot2, "U_index_process_plot1.png");
 
-# plotlyjs() this line creates error
-plot1 = plot(pt.shared.tempering.communication_barriers.localbarrier)
-savefig(plot1, "U_localbarrier1.png")
+# # plotlyjs() this line creates error
+# plot1 = plot(pt.shared.tempering.communication_barriers.localbarrier)
+# savefig(plot1, "U_localbarrier1.png")
