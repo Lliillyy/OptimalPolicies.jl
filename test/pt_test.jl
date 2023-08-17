@@ -4,5 +4,5 @@ using StatsPlots
 # [test/pt_test.jl]
 
 @testset "pigeons" begin
-    include("../src/pt.jl")
+    include("../src/pt_v2.jl")
 end

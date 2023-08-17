@@ -4,6 +4,6 @@ module OptimalPolicies
 using Pigeons
 using Distributions, StatsPlots
 include("mcmc.jl")
-include("pt.jl")
+include("pt_v2.jl")
 
 end # module OptimalPolicies

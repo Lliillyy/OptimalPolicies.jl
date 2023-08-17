@@ -50,7 +50,7 @@ function Pigeons.step!(explorer::UMetropolis, replica, shared)
     # propose a change and record the change in log probability
     log_pr_before = log_potential(replica.state)
     prev_x = replica.state.x
-    replica.state.x = prev_x + randn(replica.rng) * 0.2
+    replica.state.x = prev_x + randn(replica.rng) * 0.5
     replica.state.U_value = recompute_U(replica.state)
     log_pr_after = log_potential(replica.state)
 
@@ -62,7 +62,7 @@ function Pigeons.step!(explorer::UMetropolis, replica, shared)
     end # (nothing to do if accept, we work in-place)
 end
 
-# perform sampling - sanity check: log(Z) ≈ true value of around 33.3 for this example
+# perform sampling - sanity check
 pt = pigeons(target = ULogPotential(8.0), record = [traces; index_process])
 
 # pt = pigeons(
@@ -89,12 +89,12 @@ chain_plot = plot(p1, p2, layout = (2, 1), size = (1500, 600))
 # chain_plot = plot(samples)
 savefig(chain_plot, "chain_plot.png");
 
-# # # sanity check: the local communication barrier has a peak near the predicted phase transition log(1+sqrt(2))/2
-# using Plots
+# # sanity check: the local communication barrier has a peak near the predicted phase transition log(1+sqrt(2))/2
+using Plots
 
-# plot2 = plot(pt.reduced_recorders.index_process);
-# savefig(plot2, "U_index_process_plot1.png");
+plot2 = plot(pt.reduced_recorders.index_process);
+savefig(plot2, "U_index_process_plot1.png");
 
-# # plotlyjs() this line creates error
-# plot1 = plot(pt.shared.tempering.communication_barriers.localbarrier)
-# savefig(plot1, "U_localbarrier1.png")
+# plotlyjs() this line creates error
+plot1 = plot(pt.shared.tempering.communication_barriers.localbarrier)
+savefig(plot1, "U_localbarrier1.png")
