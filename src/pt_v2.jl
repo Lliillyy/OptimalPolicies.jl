@@ -3,6 +3,7 @@ using Random
 using Distributions
 using StatsPlots
 import Base.@kwdef
+include("mcmc.jl")
 
 @kwdef struct ULogPotential
     beta::Float64
@@ -15,13 +16,13 @@ end
 Base.copy(state::UState) = UState(state.x)
 
 # Make ULogPotential conform the log_potential informal interface
-(log_potential::ULogPotential)(state::UState) = log_potential.beta * (state.x^2 - 1)^2
+(log_potential::ULogPotential)(state::UState) = - log_potential.beta * (state.x^2 - 1)^2
 
-# Reference distribution uses beta = 1.0
+# Reference distribution
 Pigeons.default_reference(log_potential::ULogPotential) = ULogPotential(0.0)
 
 # Initialization
-Pigeons.initialization(log_potential::ULogPotential, ::AbstractRNG, ::Int) = UState(0.0)
+Pigeons.initialization(log_potential::ULogPotential, ::AbstractRNG, ::Int) = UState(1.0)
 
 # MCMC explorer 
 # This struct should not contain state that is replica-specific 
@@ -42,18 +43,22 @@ function Pigeons.step!(explorer::UMetropolis, replica, shared)
     log_pr_after = log_potential(replica.state)
 
     # accept-reject step 
-    accept_ratio = exp(log_pr_after - log_pr_before)
-    if accept_ratio < 1 && rand(replica.rng) > accept_ratio
+    accept_ratio = log_pr_after - log_pr_before
+    if log(rand(replica.rng)) >= accept_ratio
         # reject: revert the move we just proposed
         replica.state.x = prev_x
     end # (nothing to do if accept, we work in-place)
 end
+
+
+# Pigeons.extract_sample(state::UState, log_potential) = state.x
 
 # perform sampling
 pt = pigeons(
     target = ULogPotential(8.0),
     reference = ULogPotential(1.0),
     n_chains = 5,
+    n_rounds = 14, # number of iteration = 2^n_rounds
     record = [traces; index_process],
 )
 
@@ -64,21 +69,17 @@ pt = pigeons(
 # end
 
 vector = get_sample(pt)
-# print(length(vector))
+print(length(vector), eltype(vector))
 x_vector = [element.x for element in vector]
 p1 = StatsPlots.plot(x_vector, xlabel = "Iteration", ylabel = "x")
-savefig(p1, "chain_plot1.png");
-
-# chain_plot = plot(p1, p2, layout = (2, 1), size = (1500, 600))
-# chain_plot = plot(samples)
-# savefig(chain_plot, "chain_plot1.png");
+plot_chain(x_vector, 8, dir = "pt_v2_result/")
 
 # # sanity check: the local communication barrier has a peak near the predicted phase transition log(1+sqrt(2))/2
 # using Plots
 
 plot2 = StatsPlots.plot(pt.reduced_recorders.index_process);
-savefig(plot2, "U_index_process_plot1.png");
+savefig(plot2, "pt_v2_result/U_index_process_plot.png");
 
 # plotlyjs() this line creates error
 plot1 = StatsPlots.plot(pt.shared.tempering.communication_barriers.localbarrier)
-savefig(plot1, "U_localbarrier1.png")
+savefig(plot1, "pt_v2_result/U_localbarrier.png")
