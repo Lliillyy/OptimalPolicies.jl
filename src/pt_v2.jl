@@ -16,7 +16,7 @@ end
 Base.copy(state::UState) = UState(state.x)
 
 # Make ULogPotential conform the log_potential informal interface
-(log_potential::ULogPotential)(state::UState) = - log_potential.beta * (state.x^2 - 1)^2
+(log_potential::ULogPotential)(state::UState) = -log_potential.beta * (state.x^2 - 1)^2
 
 # Reference distribution
 Pigeons.default_reference(log_potential::ULogPotential) = ULogPotential(0.0)
