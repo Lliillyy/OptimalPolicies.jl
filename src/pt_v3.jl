@@ -58,7 +58,7 @@ Pigeons.default_explorer(lp::ULogPotential) = UMetropolis()
 #    some global parameters
 # shared = even higher level, knows about other replicas
 function Pigeons.step!(explorer::UMetropolis, replica, shared)
-    
+
     # find the log potential for this replica
     # this is a function
     log_potential = Pigeons.find_log_potential(replica, shared.tempering, shared)
@@ -69,7 +69,7 @@ function Pigeons.step!(explorer::UMetropolis, replica, shared)
     # current objective value 
     # * if in a given application this is an expensive operation, might also store it as a field somewhere to avoid recomputing it
     log_pr_before = log_potential(replica.state)
-    
+
     # copy/store current state
     # * if in a given application this is a large object, will instead change it in place, and then change it back if we reject the change (see Ising example)
     prev_x = replica.state.x
@@ -110,8 +110,9 @@ plot_chain(x_vector, 8, dir = "pt_v3_result/")
 # # sanity check: the local communication barrier has a peak near the predicted phase transition log(1+sqrt(2))/2
 # using Plots
 
-for i=1:5
-    pt.reduced_recorders.index_process[i] = pt.reduced_recorders.index_process[i][10000:10050] 
+for i = 1:5
+    pt.reduced_recorders.index_process[i] =
+        pt.reduced_recorders.index_process[i][10000:10050]
 end
 
 plot2 = StatsPlots.plot(pt.reduced_recorders.index_process) #|> display
