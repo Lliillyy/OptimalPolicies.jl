@@ -7,7 +7,7 @@ using Test
         include("pt_test.jl")
     end
 
-    # @testset "mcmc_test" begin
-    #     include("mcmc_test.jl")
-    # end
+    @testset "mcmc_test" begin
+        include("mcmc_test.jl")
+    end
 end

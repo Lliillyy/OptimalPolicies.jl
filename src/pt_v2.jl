@@ -5,14 +5,22 @@ using StatsPlots
 import Base.@kwdef
 include("mcmc.jl")
 
+"""
+    LogPotential
+
+ULogPotential holds the temperature parameter `beta`
+"""
 # not application specific, just like this
 @kwdef struct ULogPotential
     beta::Float64
 end
 
 """
-UState hold the state of the system, which is going to be very application-specific.
-Here, it's just a number, but this might be itself a large object, e.g. a Matrix, or a lists of lists, etc.
+    State
+
+UState hold the state of the system, which is going to be application-specific.
+Here, it's just a number, but this might be itself a large object, 
+e.g. a Matrix, or a lists of lists, etc.
 """
 # ? where do we store static data objects that enter computation?
 mutable struct UState
@@ -35,20 +43,24 @@ Pigeons.default_reference(log_potential::ULogPotential) = ULogPotential(0.0)
 # Initialization: initial conditions for the state of the system (x)
 Pigeons.initialization(log_potential::ULogPotential, ::AbstractRNG, ::Int) = UState(1.0)
 
-# MCMC explorer 
-# This struct should not contain state that is replica-specific 
-#     and/or changed in the inner sampling loop (use an Augmentation if 
-#     the explorer needs replica-specific auxiliary state information)
+"""
+    Metropolis
+
+MCMC explorer, should not contain state that is replica-specific 
+and/or changed in the inner sampling loop (use an Augmentation if 
+the explorer needs replica-specific auxiliary state information)
+"""
 @kwdef struct UMetropolis end
 
 # Make UMetropolis conform the explorer informal interface
 Pigeons.default_explorer(lp::ULogPotential) = UMetropolis()
 
 """
-Customized MCMC exploration function
+    Pigeons.step!(explorer::UMetropolis, replica, shared)
+
+Customized MCMC exploration function that performs MCMC update within each chain
 """
-# Perform explorer MCMC step
-# update within each chain
+# 
 # glossary:
 # explorer = object that does this updating
 # replica = roughly corresponds to a chain. 
