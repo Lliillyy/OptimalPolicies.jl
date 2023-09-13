@@ -5,7 +5,7 @@ Pkg.instantiate()
 # import the classes and functions from pt_v2
 include("../src/pt_v2.jl")
 
-# perform pt
+# perform distributed pt with MPI settings
 pt = load(
     pigeons(
         target = ULogPotential(8.0),

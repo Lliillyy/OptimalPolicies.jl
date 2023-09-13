@@ -6,29 +6,27 @@ import Base.@kwdef
 include("mcmc.jl")
 
 """
-    LogPotential
+    ULogPotential
 
-ULogPotential holds the temperature parameter `beta`
+ULogPotential holds the temperature parameter `beta` in the objective function
 """
-# not application specific, just like this
 @kwdef struct ULogPotential
     beta::Float64
 end
 
 """
-    State
+    UState
 
-UState hold the state of the system, which is going to be application-specific.
+UState holds the state of the system, which is going to be application-specific.
 Here, it's just a number, but this might be itself a large object, 
 e.g. a Matrix, or a lists of lists, etc.
 """
-# ? where do we store static data objects that enter computation?
 mutable struct UState
     x::Float64
-    # Other state variables can be stored here
+    # Other state variables or data can be stored here
 end
 
-# we need to define a copy function for the state, so that we can copy it when we need to
+# We need to define a copy function for the state, so that we can copy it when we need to
 Base.copy(state::UState) = UState(state.x)
 
 # ! This is crucial, here we are computing the objective function as a function of the state (x)
@@ -38,13 +36,13 @@ Base.copy(state::UState) = UState(state.x)
 # Reference distribution 
 # this is the lowest beta used in the tempering schedule, i.e. the reference distribution
 # if we don't specify `reference=ULogPotential(beta)` as an argument for pt() we will be default use this
-Pigeons.default_reference(log_potential::ULogPotential) = ULogPotential(0.0)
+Pigeons.default_reference(log_potential::ULogPotential) = ULogPotential(1.0)
 
 # Initialization: initial conditions for the state of the system (x)
 Pigeons.initialization(log_potential::ULogPotential, ::AbstractRNG, ::Int) = UState(1.0)
 
 """
-    Metropolis
+    UMetropolis
 
 MCMC explorer, should not contain state that is replica-specific 
 and/or changed in the inner sampling loop (use an Augmentation if 
@@ -59,15 +57,17 @@ Pigeons.default_explorer(lp::ULogPotential) = UMetropolis()
     Pigeons.step!(explorer::UMetropolis, replica, shared)
 
 Customized MCMC exploration function that performs MCMC update within each chain
+
+glossary:
+
+explorer: object that does this updating
+
+replica: roughly corresponds to a chain, which
+holds the state of the system, random number generator state,
+and some global parameters
+
+shared: even higher level object that knows about other replicas
 """
-# 
-# glossary:
-# explorer = object that does this updating
-# replica = roughly corresponds to a chain. 
-#    It's an object that holds the state of the system + 
-#    random number generator state + 
-#    some global parameters
-# shared = even higher level, knows about other replicas
 function Pigeons.step!(explorer::UMetropolis, replica, shared)
 
     # find the log potential for this replica
