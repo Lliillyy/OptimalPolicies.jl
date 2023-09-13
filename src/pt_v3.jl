@@ -107,9 +107,6 @@ x_vector = [element.x for element in vector]
 p1 = StatsPlots.plot(x_vector, xlabel = "Iteration", ylabel = "x")
 plot_chain(x_vector, 8, dir = "pt_v3_result/")
 
-# # sanity check: the local communication barrier has a peak near the predicted phase transition log(1+sqrt(2))/2
-# using Plots
-
 for i = 1:5
     pt.reduced_recorders.index_process[i] =
         pt.reduced_recorders.index_process[i][10000:10050]
@@ -118,6 +115,5 @@ end
 plot2 = StatsPlots.plot(pt.reduced_recorders.index_process) #|> display
 savefig(plot2, "pt_v3_result/U_index_process_plot.png");
 
-# plotlyjs() this line creates error
 plot1 = StatsPlots.plot(pt.shared.tempering.communication_barriers.localbarrier)
 savefig(plot1, "pt_v3_result/U_localbarrier.png")
